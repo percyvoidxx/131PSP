@@ -1,0 +1,693 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>PSP Workflow Companion</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: sticky navy header, amber disclaimer strip, one centered column of cards (max 1040px), footer. Healthcare-adjacent SaaS look from the brief. */
+:root {
+  --navy: #153B50;
+  --teal: #0D9488;
+  --teal-soft: #DDF3EF;
+  --amber: #E9A23B;
+  --amber-soft: #FDF3E1;
+  --bg: #F5F7FA;
+  --surface: #FFFFFF;
+  --surface-2: #F5F7FA;
+  --ink: #1F2937;
+  --muted: #64748B;
+  --line: #DDE3EA;
+  --heading: #153B50;
+  --btn: #0B766C;
+  --btn-hover: #095F57;
+  --link: #0B766C;
+  --head-bg: #153B50;
+  --head-ink: #FFFFFF;
+  --shadow: 0 1px 2px rgba(21,59,80,.06), 0 6px 18px rgba(21,59,80,.06);
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --teal-soft: #14403F;
+    --amber-soft: #3A2E14;
+    --bg: #0E1A23;
+    --surface: #152632;
+    --surface-2: #1B2E3B;
+    --ink: #E6EDF3;
+    --muted: #9AABBA;
+    --line: #2A3F4E;
+    --heading: #E6EDF3;
+    --link: #5EDAC9;
+    --head-bg: #0B2230;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --teal-soft: #14403F;
+  --amber-soft: #3A2E14;
+  --bg: #0E1A23;
+  --surface: #152632;
+  --surface-2: #1B2E3B;
+  --ink: #E6EDF3;
+  --muted: #9AABBA;
+  --line: #2A3F4E;
+  --heading: #E6EDF3;
+  --link: #5EDAC9;
+  --head-bg: #0B2230;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-padding-top: 96px; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.55;
+  min-height: 100vh;
+}
+.page { display: flex; flex-direction: column; min-height: 100vh; }
+.wrap {
+  width: 100%;
+  max-width: 1104px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { color: var(--heading); line-height: 1.2; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.3rem, 1.1rem + 1vw, 1.7rem); font-weight: 650; letter-spacing: -0.01em; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+p { margin: 0; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 6px; }
+h1:focus, h2:focus { outline: none; }
+
+/* header */
+.site-head { background: var(--head-bg); color: var(--head-ink); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--head-bg); }
+.head-row { display: flex; align-items: center; gap: 12px 24px; flex-wrap: wrap; padding-block: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; background: none; border: 0; color: inherit; cursor: pointer; padding: 4px; font-weight: 650; font-size: 1.05rem; letter-spacing: -0.01em; }
+.brand-mark { width: 32px; height: 32px; border-radius: 9px; background: var(--teal); display: grid; place-items: center; }
+.nav { display: flex; gap: 4px; margin-left: auto; overflow-x: auto; max-width: 100%; scrollbar-width: thin; }
+.nav button { background: none; border: 0; color: rgba(255,255,255,.82); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: .92rem; font-weight: 500; white-space: nowrap; }
+.nav button:hover { background: rgba(255,255,255,.1); color: #fff; }
+.nav button[aria-current="page"] { background: rgba(255,255,255,.16); color: #fff; }
+.site-head :focus-visible { outline-color: #fff; }
+.disclaimer { background: var(--amber-soft); color: var(--ink); border-bottom: 1px solid var(--amber); font-size: .85rem; font-weight: 500; text-align: center; padding-block: 8px; }
+
+/* main */
+main { flex: 1; padding-block: 36px 56px; }
+.stack { display: flex; flex-direction: column; gap: 24px; }
+.eyebrow { font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.lede { color: var(--muted); font-size: 1.05rem; max-width: 62ch; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 28px; }
+.card.flat { box-shadow: none; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.pcard { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+.pcard p { color: var(--muted); max-width: 46ch; }
+.pcard .btn { margin-top: auto; }
+.ico { width: 48px; height: 48px; border-radius: 12px; background: var(--teal-soft); color: var(--link); display: grid; place-items: center; }
+svg.i { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.ico svg.i { width: 24px; height: 24px; }
+.meta { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { font-size: .78rem; font-weight: 500; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); }
+.chip.teal { background: var(--teal-soft); border-color: transparent; color: var(--link); }
+
+/* buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 10px; padding: 11px 18px; font-weight: 600; font-size: .95rem; cursor: pointer; border: 1px solid transparent; background: var(--btn); color: #fff; text-decoration: none; }
+.btn:hover { background: var(--btn-hover); }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn.ghost:hover { background: var(--surface-2); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.btn-row .spacer { flex: 1; }
+.linkbtn { background: none; border: 0; color: var(--link); font-weight: 600; cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 3px; }
+
+/* progress */
+.progress { display: flex; flex-direction: column; gap: 8px; }
+.progress-top { display: flex; justify-content: space-between; gap: 12px; font-size: .85rem; color: var(--muted); font-weight: 500; }
+.segs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
+.seg { height: 6px; border-radius: 999px; background: var(--line); }
+.seg.done { background: var(--teal); }
+.seg.now { background: var(--navy); }
+:root[data-theme="dark"] .seg.now { background: #8FD3E8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .seg.now { background: #8FD3E8; } }
+
+/* workflow layout */
+.two-col { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.case-card { background: var(--surface-2); border: 1px dashed var(--line); border-radius: 12px; padding: 16px 18px; display: grid; gap: 6px; font-size: .95rem; }
+.case-card dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 0; }
+.case-card dt { color: var(--muted); font-size: .85rem; }
+.case-card dd { margin: 0; font-weight: 500; }
+.prompt { border-left: 4px solid var(--teal); padding: 4px 0 4px 16px; font-size: 1.1rem; font-weight: 500; color: var(--heading); }
+.ask { margin: 0; padding-left: 20px; color: var(--muted); display: grid; gap: 4px; }
+.support { background: var(--amber-soft); border: 1px solid var(--amber); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.support h3 { display: flex; gap: 8px; align-items: center; }
+.support p { font-size: .94rem; }
+.support.active { box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 45%, transparent); }
+.support .tag { font-size: .8rem; font-weight: 600; }
+.stepper { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.stepper li { display: flex; gap: 10px; align-items: center; font-size: .9rem; color: var(--muted); padding: 6px 8px; border-radius: 8px; }
+.stepper li .n { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; font-size: .75rem; font-weight: 600; flex: none; }
+.stepper li.now { color: var(--heading); font-weight: 600; background: var(--surface-2); }
+.stepper li.now .n { border-color: var(--navy); background: var(--navy); color: #fff; }
+.stepper li.done .n { background: var(--teal); border-color: var(--teal); color: #fff; }
+
+/* choices */
+.choices { display: grid; gap: 12px; }
+.choice { display: flex; gap: 14px; align-items: flex-start; text-align: left; width: 100%; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 14px 16px; cursor: pointer; }
+.choice:hover { border-color: var(--teal); }
+.choice .letter { width: 30px; height: 30px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--line); display: grid; place-items: center; font-weight: 650; font-size: .85rem; flex: none; color: var(--heading); }
+.choice[aria-pressed="true"] { border-color: var(--teal); background: var(--teal-soft); }
+.choice[aria-pressed="true"] .letter { background: var(--teal); border-color: var(--teal); color: #fff; }
+.choice span.t { padding-top: 3px; }
+.feedback { border-radius: 14px; padding: 18px 20px; border: 1px solid var(--line); display: grid; gap: 6px; }
+.feedback.good { background: var(--teal-soft); border-color: transparent; }
+.feedback.think { background: var(--amber-soft); border-color: var(--amber); }
+.feedback .fh { font-weight: 650; color: var(--heading); display: flex; gap: 8px; align-items: center; }
+.sceneblock { background: var(--surface-2); border-radius: 12px; padding: 16px 18px; border: 1px solid var(--line); }
+
+/* forms */
+.form { display: grid; gap: 22px; }
+fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 10px; min-width: 0; }
+legend { font-weight: 600; color: var(--heading); padding: 0; margin-bottom: 8px; }
+.opts { display: flex; gap: 8px; flex-wrap: wrap; }
+.opt { position: relative; }
+.opt input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.opt label { display: inline-block; padding: 9px 16px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); font-size: .92rem; font-weight: 500; cursor: pointer; }
+.opt input:checked + label { background: var(--teal-soft); border-color: var(--teal); color: var(--heading); font-weight: 600; }
+.opt input:focus-visible + label { outline: 3px solid var(--teal); outline-offset: 2px; }
+.field { display: grid; gap: 6px; }
+.field label { font-weight: 600; color: var(--heading); }
+textarea { width: 100%; min-height: 88px; resize: vertical; border: 1.5px solid var(--line); border-radius: 10px; background: var(--surface); padding: 10px 12px; line-height: 1.5; }
+textarea:focus { outline: 3px solid color-mix(in srgb, var(--teal) 50%, transparent); border-color: var(--teal); }
+.hint { font-size: .85rem; color: var(--muted); }
+.divider { border: 0; border-top: 1px solid var(--line); margin: 0; }
+.notice { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; font-size: .9rem; color: var(--muted); }
+.confirm { text-align: left; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+.tick { width: 52px; height: 52px; border-radius: 50%; background: var(--teal-soft); color: var(--link); display: grid; place-items: center; }
+.tick svg.i { width: 28px; height: 28px; }
+
+/* data */
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: var(--surface-2); color: var(--muted); font-weight: 600; font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+td { font-variant-numeric: tabular-nums; }
+tr:last-child td { border-bottom: 0; }
+.export { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .8rem; min-height: 150px; white-space: pre; overflow: auto; }
+.toast { color: var(--link); font-weight: 600; font-size: .9rem; }
+
+footer { border-top: 1px solid var(--line); background: var(--surface); padding-block: 22px; font-size: .85rem; color: var(--muted); }
+.foot-row { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+@media (max-width: 820px) {
+  .grid-2, .grid-3, .two-col { grid-template-columns: minmax(0, 1fr); }
+  .stepper-wrap { display: none; }
+  .card { padding: 20px; }
+  main { padding-block: 24px 40px; }
+  .nav { margin-left: 0; width: 100%; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .view { animation: rise .18s ease-out; }
+  @keyframes rise { from { opacity: .6; } to { opacity: 1; } }
+}
+</style>
+
+<div class="page">
+  <header class="site-head">
+    <div class="wrap head-row">
+      <button class="brand" data-a="go:home" aria-label="PSP Workflow Companion home">
+        <span class="brand-mark" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" style="stroke:#fff"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg></span>
+        PSP Workflow Companion
+      </button>
+      <nav class="nav" id="nav" aria-label="Main"></nav>
+    </div>
+  </header>
+  <div class="disclaimer"><div class="wrap">Academic Prototype | Fictional Scenarios | Not for Clinical Use</div></div>
+  <main class="wrap" id="app" aria-live="polite"></main>
+  <footer>
+    <div class="wrap foot-row">
+      <span>Academic Prototype | Fictional Scenarios | Not for Clinical Use</span>
+      <span>UPOU IDT 131 FMA 1B. No patient data, company procedures, or external services are used. Everything stays in this browser.</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- storage helpers (all wrapped; page works without storage) ---------- */
+  var mem = {};
+  function load(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return mem[k] !== undefined ? mem[k] : d; } }
+  function save(k, v) { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+  var feedbackList = load("psp_feedback", []);
+  var reflections = load("psp_reflections", []);
+  var eventLog = load("psp_events", []);
+
+  function logEvent(type, detail) {
+    eventLog.push({ t: new Date().toISOString(), type: type, detail: detail || "" });
+    save("psp_events", eventLog);
+  }
+
+  /* ---------- content ---------- */
+  var AID_STEPS = [
+    {
+      title: "Identify case context",
+      explain: "Start by noting the basic details of the case, so you know which requirements and guidance to look for.",
+      prompt: "Which clinic and which type of workflow does this case belong to?",
+      ask: ["What is the workflow type?", "Which clinic is the case tied to?", "Is anything in the case notes still unconfirmed?"]
+    },
+    {
+      title: "Confirm applicable requirements",
+      explain: "Check whether any clinic-specific requirement applies to this case before choosing an action.",
+      prompt: "Are the applicable requirements clear?",
+      decision: true,
+      ask: []
+    },
+    {
+      title: "Locate approved guidance",
+      explain: "Open the approved reference for this case context instead of relying on memory or a similar past case.",
+      prompt: "Which approved reference covers this clinic and workflow type, and is it the current version?",
+      ask: ["Is the reference marked as current?", "Does it name the requirement you confirmed?", "If two sources disagree, which one is approved?"]
+    },
+    {
+      title: "Verify required actions",
+      explain: "List the actions the guidance requires for this case and confirm each one applies before you start.",
+      prompt: "Which actions does the guidance require, and in what order?",
+      ask: ["Is a verification step required first?", "Are there follow-up attempts to schedule?", "Does anything need to be handed to another team?"]
+    },
+    {
+      title: "Confirm documentation",
+      explain: "Before closing the case, check that the required notes and follow-up details are recorded.",
+      prompt: "Is every completed action documented, and is the next follow-up recorded?",
+      ask: ["Are your notes readable by a teammate who picks this up?", "Did you check the previous notes on this case?", "Is the next follow-up date recorded?"]
+    }
+  ];
+
+  var D1 = {
+    scene: null,
+    q: "What should you do next?",
+    choices: [
+      { l: "A", t: "Proceed using your memory of a similar case.", tone: "think", h: "Consider verifying first", f: "Relying on memory may result in applying an incorrect requirement. Consider verifying the relevant information before proceeding." },
+      { l: "B", t: "Consult the current approved guidance for the applicable case context.", tone: "good", h: "An appropriate next step", f: "Consulting current approved guidance is an appropriate information-retrieval step. Continue by reviewing the relevant requirements." },
+      { l: "C", t: "Ask a teammate to perform the entire workflow.", tone: "think", h: "Support can help, with a caveat", f: "Seeking support can be appropriate, but a complete handoff may be unnecessary if clarification is sufficient." }
+    ]
+  };
+  var D2 = {
+    scene: "The approved reference does not clearly resolve the situation. You still need to determine the appropriate next step.",
+    q: "What should you do?",
+    choices: [
+      { l: "A", t: "Guess based on a similar case.", tone: "think", h: "Consider another approach", f: "An unverified assumption may result in an incorrect action." },
+      { l: "B", t: "Seek clarification through the designated support channel.", tone: "good", h: "An appropriate next step", f: "Resolving uncertainty through an appropriate support channel helps avoid proceeding with an unclear requirement." },
+      { l: "C", t: "Proceed without resolving the uncertainty.", tone: "think", h: "Consider another approach", f: "Proceeding without clarification may leave a relevant requirement unresolved." }
+    ]
+  };
+  var REFLECT_Q = [
+    "What information was most important in making your decision?",
+    "At what point did you need additional support?",
+    "What would you verify before completing a similar workflow?"
+  ];
+
+  /* ---------- icons ---------- */
+  var IC = {
+    compass: '<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>',
+    branch: '<path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/>',
+    right: '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+    left: '<path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>',
+    home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    help: '<circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/>',
+    clip: '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',
+    redo: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>'
+  };
+  function icon(n) { return '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' + IC[n] + '</svg>'; }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+
+  /* ---------- state ---------- */
+  var S = {
+    view: "home",
+    aidStep: 0, aidClear: null, aidDone: false,
+    scen: "intro", d1: null, d2: null, fbSeen: {}, refl: ["", "", ""], reflSaved: false,
+    fbSaved: false,
+    exportFmt: "csv", toast: "", confirmClear: ""
+  };
+
+  /* ---------- views ---------- */
+  function progress(label, total, now, doneCount) {
+    var segs = "";
+    for (var i = 0; i < total; i++) segs += '<span class="seg ' + (i < doneCount ? "done" : i === now ? "now" : "") + '"></span>';
+    return '<div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="' + total + '" aria-valuenow="' + (now + 1) + '" aria-label="' + esc(label) + '">' +
+      '<div class="progress-top"><span>' + esc(label) + '</span></div><div class="segs">' + segs + '</div></div>';
+  }
+
+  function vHome() {
+    return '<div class="view stack">' +
+      '<div class="stack" style="gap:10px"><span class="eyebrow">Academic prototype for usability review</span>' +
+      '<h1 id="h" tabindex="-1">PSP Workflow Companion</h1>' +
+      '<p class="lede">Supporting accurate workflow decisions.</p></div>' +
+      '<div class="grid-2">' +
+        '<section class="card pcard"><span class="ico">' + icon("compass") + '</span>' +
+          '<h2>Workflow Decision Aid</h2>' +
+          '<p>Explore a structured workflow guide designed to support information retrieval and procedural consistency.</p>' +
+          '<div class="meta"><span class="chip">5 steps</span><span class="chip">About 5 minutes</span></div>' +
+          '<button class="btn" data-a="go:aid">Open Workflow Aid ' + icon("right") + '</button></section>' +
+        '<section class="card pcard"><span class="ico">' + icon("branch") + '</span>' +
+          '<h2>Scenario Practice</h2>' +
+          '<p>Practice making decisions in a fictional support workflow and receive explanatory feedback.</p>' +
+          '<div class="meta"><span class="chip">2 decisions</span><span class="chip">Short reflection</span></div>' +
+          '<button class="btn" data-a="go:scenario">Start Scenario ' + icon("right") + '</button></section>' +
+      '</div>' +
+      '<section class="card flat stack" style="gap:16px">' +
+        '<div class="two-col" style="align-items:center">' +
+          '<div class="stack" style="gap:8px"><h3>Reviewing this prototype?</h3>' +
+          '<p class="hint" style="font-size:.95rem">Try either prototype or both, then share your reaction. There are no right or wrong answers and no scores. Your feedback helps decide which design direction fits PSP work best.</p></div>' +
+          '<div class="btn-row" style="justify-content:flex-end"><button class="btn ghost" data-a="go:feedback">' + icon("clip") + ' Give feedback</button></div>' +
+        '</div>' +
+        '<hr class="divider">' +
+        '<div class="grid-3">' +
+          '<div><h3 style="font-size:.95rem">What this is</h3><p class="hint">Two low-fidelity design directions built from fictional content so they can be compared.</p></div>' +
+          '<div><h3 style="font-size:.95rem">What this is not</h3><p class="hint">Not an official company tool, and not a measure of real-world accuracy. No real procedures or patient data appear here.</p></div>' +
+          '<div><h3 style="font-size:.95rem">Where the ideas come from</h3><p class="hint">Reported themes from PSP interviews and an HR stakeholder: clinic-specific requirements, finding current guidance, and follow-through. These are reported themes, not verified QA findings.</p></div>' +
+        '</div>' +
+      '</section>' +
+    '</div>';
+  }
+
+  function stepperHtml(cur) {
+    var h = '<ol class="stepper">';
+    AID_STEPS.forEach(function (s, i) {
+      h += '<li class="' + (i === cur ? "now" : i < cur ? "done" : "") + '"><span class="n">' + (i < cur ? "&#10003;" : i + 1) + '</span>' + esc(s.title) + '</li>';
+    });
+    return h + '</ol>';
+  }
+
+  function supportCard(active) {
+    return '<aside class="support' + (active ? " active" : "") + '" aria-label="Need clarification?">' +
+      '<h3>' + icon("help") + ' Need clarification?</h3>' +
+      '<p>Moving ahead with an unclear requirement can mean applying the wrong step later. Pausing to resolve the uncertainty first usually costs less than correcting it afterward.</p>' +
+      '<p>Use the designated support channel for your team, such as your manager or the shared knowledge resource, and note what you were told.</p>' +
+      (active ? '<p class="tag">You chose to seek clarification. Once you have an answer, continue to approved guidance.</p>' : '') +
+    '</aside>';
+  }
+
+  function vAid() {
+    if (S.aidDone) {
+      return '<div class="view stack"><section class="card confirm">' +
+        '<span class="tick">' + icon("check") + '</span>' +
+        '<h2 id="h" tabindex="-1">Workflow walkthrough complete</h2>' +
+        '<p class="lede">You reached the end of the five-step guide' + (S.aidClear === false ? ', including the clarification path' : '') + '. Thank you for trying it.</p>' +
+        '<div class="btn-row"><button class="btn" data-a="go:feedback">' + icon("clip") + ' Give feedback</button>' +
+        '<button class="btn ghost" data-a="go:scenario">Try Scenario Practice</button>' +
+        '<button class="btn ghost" data-a="aid-restart">' + icon("redo") + ' Restart guide</button>' +
+        '<button class="btn ghost" data-a="go:home">' + icon("home") + ' Home</button></div></section></div>';
+    }
+    var i = S.aidStep, st = AID_STEPS[i];
+    var body = "";
+    if (st.decision) {
+      body += '<div class="choices" role="group" aria-label="Are the applicable requirements clear?">' +
+        '<button class="choice" data-a="aid-pick:yes" aria-pressed="' + (S.aidClear === true) + '"><span class="letter">1</span><span class="t">Yes, continue to approved guidance.</span></button>' +
+        '<button class="choice" data-a="aid-pick:no" aria-pressed="' + (S.aidClear === false) + '"><span class="letter">2</span><span class="t">No, seek clarification through the designated support channel.</span></button></div>';
+      if (S.aidClear === true) body += '<div class="feedback good"><span class="fh">Requirements are clear</span><p>Continue to locate the approved guidance for this case.</p></div>';
+      if (S.aidClear === false) body += '<div class="feedback think"><span class="fh">Clarification path selected</span><p>Resolve the uncertainty through the designated support channel, then continue to approved guidance with the clarified requirement.</p></div>';
+    } else {
+      body += '<ul class="ask">' + st.ask.map(function (a) { return "<li>" + esc(a) + "</li>"; }).join("") + '</ul>';
+      if (i === 2 && S.aidClear === false) body += '<div class="notice">You sought clarification in step 2. Check that the approved guidance matches what you were told.</div>';
+    }
+    var canNext = !st.decision || S.aidClear !== null;
+    var caseCard = '<div class="case-card" aria-label="Fictional case"><strong style="font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Fictional case</strong>' +
+      '<dl><dt>Case</dt><dd>FX-001</dd><dt>Clinic</dt><dd>Clinic A (fictional)</dd><dt>Workflow</dt><dd>Device follow-up (fictional)</dd></dl></div>';
+    return '<div class="view stack">' +
+      '<div class="stack" style="gap:10px"><span class="eyebrow">Workflow Decision Aid</span></div>' +
+      progress("Step " + (i + 1) + " of 5: " + st.title, 5, i, i) +
+      '<div class="two-col"><section class="card stack">' +
+        '<div class="stack" style="gap:8px"><h2 id="h" tabindex="-1">' + (i + 1) + '. ' + esc(st.title) + '</h2><p class="lede">' + esc(st.explain) + '</p></div>' +
+        caseCard +
+        '<p class="prompt">' + esc(st.prompt) + '</p>' + body +
+        '<div class="btn-row"><button class="btn ghost" data-a="aid-back">' + icon("left") + ' Back</button>' +
+        '<button class="btn ghost" data-a="go:home">' + icon("home") + ' Home</button><span class="spacer"></span>' +
+        '<button class="btn" data-a="aid-next"' + (canNext ? "" : " disabled") + '>' + (i === 4 ? "Finish" : "Continue") + ' ' + icon("right") + '</button></div>' +
+      '</section>' +
+      '<div class="stack stepper-wrap-col">' +
+        (st.decision ? supportCard(S.aidClear === false) : '') +
+        '<div class="card flat stepper-wrap"><h3 style="margin-bottom:10px;font-size:.95rem">Your path</h3>' + stepperHtml(i) + '</div>' +
+      '</div></div>' +
+    '</div>';
+  }
+
+  function decisionCard(D, key, num) {
+    var sel = S[key];
+    var h = '<section class="card stack">' +
+      '<div class="stack" style="gap:8px"><span class="eyebrow">Decision ' + num + ' of 2</span><h2 id="h" tabindex="-1">' + esc(D.q) + '</h2></div>';
+    if (D.scene) h += '<div class="sceneblock">' + esc(D.scene) + '</div>';
+    h += '<div class="choices" role="group" aria-label="' + esc(D.q) + '">';
+    D.choices.forEach(function (c, idx) {
+      h += '<button class="choice" data-a="sc-pick:' + key + ':' + idx + '" aria-pressed="' + (sel === idx) + '"><span class="letter">' + c.l + '</span><span class="t">' + esc(c.t) + '</span></button>';
+    });
+    h += '</div>';
+    if (sel !== null) {
+      var c = D.choices[sel];
+      h += '<div class="feedback ' + c.tone + '" role="status"><span class="fh">' + icon(c.tone === "good" ? "check" : "help") + ' ' + esc(c.h) + '</span><p>' + esc(c.f) + '</p></div>' +
+        '<p class="hint">You can select another option to read its feedback before you continue.</p>';
+    }
+    h += '<div class="btn-row"><button class="btn ghost" data-a="go:home">' + icon("home") + ' Home</button><span class="spacer"></span>' +
+      '<button class="btn" data-a="sc-next"' + (sel === null ? " disabled" : "") + '>' + (num === 1 ? "Continue" : "Continue to Reflection") + ' ' + icon("right") + '</button></div></section>';
+    return h;
+  }
+
+  function vScenario() {
+    var head = '<div class="stack" style="gap:10px"><span class="eyebrow">Scenario Practice</span></div>';
+    if (S.scen === "intro") {
+      return '<div class="view stack">' + head +
+        '<section class="card stack"><h1 id="h" tabindex="-1" style="font-size:clamp(1.6rem,1.1rem + 1.6vw,2.1rem)">The Unclear Workflow</h1>' +
+        '<p style="font-size:1.05rem">A PSP is handling a fictional support case. The available case information suggests that a clinic-specific requirement may apply, but the learner cannot immediately confirm which instruction is current.</p>' +
+        '<div class="prompt">Task: Choose the most appropriate next action.</div>' +
+        '<div class="meta"><span class="chip teal">2 decisions</span><span class="chip">Feedback after each choice</span><span class="chip">No scores</span></div>' +
+        '<div class="btn-row"><button class="btn ghost" data-a="go:home">' + icon("home") + ' Home</button><span class="spacer"></span><button class="btn" data-a="sc-begin">Begin ' + icon("right") + '</button></div></section></div>';
+    }
+    if (S.scen === "d1") return '<div class="view stack">' + head + progress("Decision 1 of 3 steps", 3, 0, 0) + decisionCard(D1, "d1", 1) + '</div>';
+    if (S.scen === "d2") return '<div class="view stack">' + head + progress("Decision 2 of 3 steps", 3, 1, 1) + decisionCard(D2, "d2", 2) + '</div>';
+    /* reflection */
+    var h = '<div class="view stack">' + head + progress("Reflection, step 3 of 3", 3, 2, 2) +
+      '<section class="card stack"><div class="stack" style="gap:8px"><h2 id="h" tabindex="-1">Final reflection</h2>' +
+      '<p class="lede">Take a moment to think back over your two decisions. Short answers are fine. Your answers stay in this browser.</p></div>';
+    REFLECT_Q.forEach(function (q, i) {
+      h += '<div class="field"><label for="refl' + i + '">' + esc(q) + '</label><textarea id="refl' + i + '" data-refl="' + i + '"' + (S.reflSaved ? " readonly" : "") + '>' + esc(S.refl[i]) + '</textarea></div>';
+    });
+    if (S.reflSaved) {
+      h += '<div class="feedback good" role="status"><span class="fh">' + icon("check") + ' Reflection submitted</span><p>Saved in this browser only. Thank you. You can now share your reaction to the prototype.</p></div>' +
+        '<div class="btn-row"><button class="btn" data-a="go:feedback">' + icon("clip") + ' Give feedback</button>';
+    } else {
+      h += '<div class="btn-row"><button class="btn" data-a="reflect-submit">Submit Reflection</button>';
+    }
+    h += '<button class="btn ghost" data-a="sc-restart">' + icon("redo") + ' Restart Scenario</button><button class="btn ghost" data-a="go:home">' + icon("home") + ' Return Home</button></div></section></div>';
+    return h;
+  }
+
+  function radios(name, opts, req) {
+    return '<div class="opts">' + opts.map(function (o, i) {
+      var id = name + "_" + i;
+      return '<div class="opt"><input type="radio" id="' + id + '" name="' + name + '" value="' + esc(o) + '"' + (req && i === 0 ? " required" : (req ? " required" : "")) + '><label for="' + id + '">' + esc(o) + '</label></div>';
+    }).join("") + '</div>';
+  }
+
+  function vFeedback() {
+    if (S.fbSaved) {
+      return '<div class="view stack"><section class="card confirm"><span class="tick">' + icon("check") + '</span>' +
+        '<h2 id="h" tabindex="-1">Thank you, your feedback was recorded</h2>' +
+        '<p class="lede">It is saved in this browser only. Nothing was sent anywhere. The researcher can copy responses from the Data page at the end of the session.</p>' +
+        '<div class="btn-row"><button class="btn" data-a="go:home">' + icon("home") + ' Return Home</button>' +
+        '<button class="btn ghost" data-a="fb-again">Add another response</button>' +
+        '<button class="btn ghost" data-a="go:data">View data</button></div></section></div>';
+    }
+    var f = function (n, q, opts) { return '<fieldset><legend>' + n + '. ' + esc(q) + '</legend>' + radios("q" + n, opts, true) + '</fieldset>'; };
+    var t = function (n, q) { return '<div class="field"><label for="t' + n + '">' + n + '. ' + esc(q) + '</label><textarea id="t' + n + '" name="t' + n + '"></textarea></div>'; };
+    var scale = ["Very easy", "Easy", "Somewhat difficult", "Difficult"];
+    return '<div class="view stack"><div class="stack" style="gap:10px"><span class="eyebrow">Prototype feedback</span><h1 id="h" tabindex="-1" style="font-size:clamp(1.6rem,1.1rem + 1.6vw,2.1rem)">Share your reaction</h1>' +
+      '<p class="lede">This helps compare the two design directions. Please do not include patient details, real names, or company procedures.</p></div>' +
+      '<form class="card form" id="fbform" novalidate>' +
+      '<fieldset><legend>Participant ID</legend>' + radios("pid", ["PSP-01", "PSP-02", "PSP-03", "Other"], true) + '</fieldset>' +
+      '<fieldset><legend>Prototype reviewed</legend>' + radios("proto", ["Workflow Decision Aid", "Branching Scenario", "Both"], true) + '</fieldset>' +
+      '<hr class="divider">' +
+      f(1, "Was the prototype easy to understand?", scale) +
+      f(2, "Was it easy to identify what to do next?", scale) +
+      f(3, "Could this type of support help with workflow-related tasks?", ["Yes", "Maybe", "No"]) +
+      t(4, "What was most useful?") + t(5, "What was confusing or difficult?") + t(6, "What would you change?") + t(7, "Which prototype would you prefer, and why?") +
+      '<p class="hint" id="fberr" role="alert" style="color:var(--ink)" hidden>Please answer the choice questions above before submitting.</p>' +
+      '<div class="btn-row"><button class="btn" type="submit">Submit Feedback</button><button class="btn ghost" type="button" data-a="go:home">Cancel</button></div>' +
+      '</form></div>';
+  }
+
+  /* ---------- exports ---------- */
+  var FB_COLS = ["participant_id", "prototype_reviewed", "q1_understand", "q2_next_step", "q3_could_help", "q4_most_useful", "q5_confusing", "q6_change", "q7_preferred_and_why", "submitted_at"];
+  function csvCell(v) { v = String(v == null ? "" : v).replace(/\r?\n/g, " "); return /[",]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  function toCSV() {
+    var rows = [FB_COLS.join(",")];
+    feedbackList.forEach(function (r) { rows.push(FB_COLS.map(function (c) { return csvCell(r[c]); }).join(",")); });
+    return rows.join("\n");
+  }
+  function toJSON() {
+    return JSON.stringify({ note: "Exploratory prototype data. Not a measure of actual workplace performance.", feedback: feedbackList, reflections: reflections, interaction_log: eventLog }, null, 2);
+  }
+
+  function vData() {
+    var text = S.exportFmt === "csv" ? toCSV() : toJSON();
+    var rows = eventLog.slice(-40).reverse().map(function (e) {
+      var d = new Date(e.t);
+      return "<tr><td>" + d.toLocaleTimeString([], { hour12: false }) + "</td><td>" + esc(e.type) + "</td><td>" + esc(e.detail) + "</td></tr>";
+    }).join("");
+    return '<div class="view stack"><div class="stack" style="gap:10px"><span class="eyebrow">For the researcher</span><h1 id="h" tabindex="-1" style="font-size:clamp(1.6rem,1.1rem + 1.6vw,2.1rem)">Feedback and interaction data</h1>' +
+      '<p class="lede">Everything below is stored only in this browser. If a colleague tests on their own device, copy their data at the end of the session.</p></div>' +
+      '<section class="card stack"><div class="stack" style="gap:6px"><h2>Feedback responses (' + feedbackList.length + ')</h2>' +
+      '<p class="hint">' + reflections.length + ' scenario reflection' + (reflections.length === 1 ? "" : "s") + ' saved. Use JSON to include reflections and the interaction log.</p></div>' +
+      '<div class="btn-row"><button class="btn" data-a="copy">Copy ' + (S.exportFmt === "csv" ? "CSV" : "JSON") + '</button>' +
+      '<button class="btn ghost" data-a="fmt:' + (S.exportFmt === "csv" ? "json" : "csv") + '">Show ' + (S.exportFmt === "csv" ? "JSON" : "CSV") + '</button>' +
+      '<span class="toast" role="status">' + esc(S.toast) + '</span></div>' +
+      '<label for="exportbox" class="hint">Export preview. If copying is blocked, select the text and copy it manually.</label>' +
+      '<textarea id="exportbox" class="export" readonly>' + esc(text) + '</textarea>' +
+      '<div class="btn-row">' + (S.confirmClear === "fb" ?
+        '<button class="btn ghost" data-a="clear-fb-yes">Confirm: delete all responses and reflections</button><button class="linkbtn" data-a="clear-no">Cancel</button>' :
+        '<button class="btn ghost" data-a="clear-fb">Clear feedback and reflections</button>') + '</div></section>' +
+      '<section class="card stack"><div class="stack" style="gap:6px"><h2>Interaction log (' + eventLog.length + ')</h2>' +
+      '<p class="hint">Exploratory prototype interaction log — not a measure of actual workplace performance.</p></div>' +
+      (rows ? '<div class="tablewrap"><table><thead><tr><th>Time</th><th>Event</th><th>Detail</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+        (eventLog.length > 40 ? '<p class="hint">Showing the latest 40 events. The JSON export contains all of them.</p>' : '') : '<p class="hint">No events yet. Open a prototype to start the log.</p>') +
+      '<div class="btn-row">' + (S.confirmClear === "log" ?
+        '<button class="btn ghost" data-a="clear-log-yes">Confirm: clear the log</button><button class="linkbtn" data-a="clear-no">Cancel</button>' :
+        '<button class="btn ghost" data-a="clear-log"' + (eventLog.length ? "" : " disabled") + '>Clear log</button>') + '</div></section></div>';
+  }
+
+  /* ---------- render ---------- */
+  var NAV = [["home", "Home"], ["aid", "Workflow Aid"], ["scenario", "Scenario"], ["feedback", "Feedback"], ["data", "Data"]];
+  function renderNav() {
+    document.getElementById("nav").innerHTML = NAV.map(function (n) {
+      return '<button data-a="go:' + n[0] + '"' + (S.view === n[0] ? ' aria-current="page"' : "") + '>' + n[1] + '</button>';
+    }).join("");
+  }
+  function render(focus) {
+    var v = { home: vHome, aid: vAid, scenario: vScenario, feedback: vFeedback, data: vData }[S.view]();
+    document.getElementById("app").innerHTML = v;
+    renderNav();
+    if (focus) {
+      window.scrollTo(0, 0);
+      var h = document.getElementById("h");
+      if (h) { try { h.focus({ preventScroll: true }); } catch (e) {} }
+    }
+    var fbForm = document.getElementById("fbform");
+    if (fbForm) fbForm.addEventListener("submit", onFeedbackSubmit);
+  }
+
+  function go(view) {
+    S.view = view; S.toast = ""; S.confirmClear = "";
+    if (view === "aid") { S.aidStep = 0; S.aidClear = null; S.aidDone = false; logEvent("step_opened", "aid step 1: " + AID_STEPS[0].title); }
+    if (view === "scenario") { resetScenario(); }
+    if (view === "feedback") { S.fbSaved = false; }
+    try { if (location.hash.slice(1) !== view) history.replaceState(null, "", "#" + view); } catch (e) {}
+    render(true);
+  }
+  function resetScenario() { S.scen = "intro"; S.d1 = null; S.d2 = null; S.refl = ["", "", ""]; S.reflSaved = false; S.fbSeen = {}; }
+
+  function aidOpen(i) { S.aidStep = i; logEvent("step_opened", "aid step " + (i + 1) + ": " + AID_STEPS[i].title); render(true); }
+
+  /* ---------- actions ---------- */
+  function onAction(a, el) {
+    var p = a.split(":");
+    switch (p[0]) {
+      case "go": go(p[1]); break;
+      case "aid-pick":
+        S.aidClear = p[1] === "yes";
+        logEvent("choice_selected", "aid decision: requirements clear = " + (S.aidClear ? "yes" : "no"));
+        render(false); break;
+      case "aid-next":
+        if (S.aidStep < 4) aidOpen(S.aidStep + 1); else { S.aidDone = true; render(true); }
+        break;
+      case "aid-back":
+        if (S.aidStep === 0) go("home"); else aidOpen(S.aidStep - 1);
+        break;
+      case "aid-restart": S.aidStep = 0; S.aidClear = null; S.aidDone = false; aidOpen(0); break;
+      case "sc-begin": S.scen = "d1"; logEvent("step_opened", "scenario decision 1"); render(true); break;
+      case "sc-pick":
+        var key = p[1], idx = parseInt(p[2], 10), D = key === "d1" ? D1 : D2;
+        S[key] = idx;
+        logEvent("choice_selected", "scenario " + key + " = " + D.choices[idx].l);
+        logEvent("feedback_viewed", "scenario " + key + " feedback " + D.choices[idx].l);
+        render(false); break;
+      case "sc-next":
+        if (S.scen === "d1") { S.scen = "d2"; logEvent("step_opened", "scenario decision 2"); }
+        else if (S.scen === "d2") { S.scen = "reflect"; logEvent("step_opened", "scenario reflection"); }
+        render(true); break;
+      case "reflect-submit":
+        reflections.push({ submitted_at: new Date().toISOString(), d1: D1.choices[S.d1] ? D1.choices[S.d1].l : "", d2: D2.choices[S.d2] ? D2.choices[S.d2].l : "", answers: REFLECT_Q.map(function (q, i) { return { prompt: q, response: S.refl[i] }; }) });
+        save("psp_reflections", reflections);
+        S.reflSaved = true; logEvent("scenario_completed", "reflection submitted");
+        render(false); break;
+      case "sc-restart": resetScenario(); S.scen = "d1"; logEvent("step_opened", "scenario restarted, decision 1"); render(true); break;
+      case "fb-again": S.fbSaved = false; render(true); break;
+      case "fmt": S.exportFmt = p[1]; S.toast = ""; render(false); break;
+      case "copy": copyExport(); break;
+      case "clear-fb": S.confirmClear = "fb"; render(false); break;
+      case "clear-log": S.confirmClear = "log"; render(false); break;
+      case "clear-no": S.confirmClear = ""; render(false); break;
+      case "clear-fb-yes": feedbackList = []; reflections = []; save("psp_feedback", feedbackList); save("psp_reflections", reflections); S.confirmClear = ""; S.toast = "Cleared."; render(false); break;
+      case "clear-log-yes": eventLog = []; save("psp_events", eventLog); S.confirmClear = ""; S.toast = "Log cleared."; render(false); break;
+    }
+  }
+
+  function copyExport() {
+    var box = document.getElementById("exportbox");
+    var text = box.value;
+    function fallback() {
+      box.focus(); box.select();
+      var ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
+      S.toast = ok ? "Copied." : "Text selected. Press Ctrl+C (or Cmd+C) to copy.";
+      render(false);
+    }
+    try {
+      navigator.clipboard.writeText(text).then(function () { S.toast = "Copied."; render(false); }, fallback);
+    } catch (e) { fallback(); }
+  }
+
+  function onFeedbackSubmit(ev) {
+    ev.preventDefault();
+    var form = ev.target;
+    var get = function (n) { var c = form.querySelector('input[name="' + n + '"]:checked'); return c ? c.value : ""; };
+    var req = ["pid", "proto", "q1", "q2", "q3"];
+    for (var i = 0; i < req.length; i++) {
+      if (!get(req[i])) { document.getElementById("fberr").hidden = false; var first = form.querySelector('input[name="' + req[i] + '"]'); if (first) first.focus(); return; }
+    }
+    var txt = function (n) { return form.querySelector("#" + n).value.trim(); };
+    feedbackList.push({
+      participant_id: get("pid"), prototype_reviewed: get("proto"), q1_understand: get("q1"), q2_next_step: get("q2"), q3_could_help: get("q3"),
+      q4_most_useful: txt("t4"), q5_confusing: txt("t5"), q6_change: txt("t6"), q7_preferred_and_why: txt("t7"), submitted_at: new Date().toISOString()
+    });
+    save("psp_feedback", feedbackList);
+    S.fbSaved = true; render(true);
+  }
+
+  document.addEventListener("click", function (e) {
+    var el = e.target.closest("[data-a]");
+    if (el && !el.disabled) onAction(el.getAttribute("data-a"), el);
+  });
+  document.addEventListener("input", function (e) {
+    var i = e.target.getAttribute && e.target.getAttribute("data-refl");
+    if (i !== null && i !== undefined) S.refl[parseInt(i, 10)] = e.target.value;
+  });
+
+  /* start on the hash view if valid */
+  var h0 = (location.hash || "").slice(1);
+  if (["aid", "scenario", "feedback", "data"].indexOf(h0) > -1) { S.view = h0; if (h0 === "aid") logEvent("step_opened", "aid step 1: " + AID_STEPS[0].title); }
+  render(false);
+  window.addEventListener("hashchange", function () {
+    var h = (location.hash || "").slice(1);
+    if (["home", "aid", "scenario", "feedback", "data"].indexOf(h) > -1 && h !== S.view) go(h);
+  });
+})();
+</script>
+
+</body></html>
